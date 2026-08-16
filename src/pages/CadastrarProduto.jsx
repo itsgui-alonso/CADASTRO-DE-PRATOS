@@ -1,7 +1,6 @@
 import { useState } from "react";
 import "./CadastrarProduto.css";
 import { use } from "react";
-
 export default function CadastrarProduto() {
   const [nome, setNome] = useState("");
   const [preco, setPreco] = useState("");
