@@ -1,0 +1,114 @@
+.grid-produtos {
+  display: flex;
+  flex-direction: column;
+  gap: 1.6rem;
+  margin-top: 3rem;
+  margin-left: 2.5rem;
+}
+
+.card-produto {
+  background-color: #fff;
+  border: 1px solid #2f6fed;
+  border-radius: 1.6rem;
+  padding: 2rem;
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+  transition:
+    box-shadow 0.2s ease,
+    transform 0.2s ease;
+  width: 100%;
+  gap: 2rem;
+  box-sizing: border-box;
+}
+
+.card-produto:hover {
+  box-shadow: 0 4px 16px rgba(47, 111, 237, 0.1);
+  transform: translateY(-2px);
+}
+
+.card-produto-img {
+  width: 120px;
+  height: 120px;
+  object-fit: cover;
+  border-radius: 1.2rem;
+  flex-shrink: 0;
+}
+
+.card-produto-conteudo {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  gap: 12px;
+}
+
+.card-produto-titulo {
+  font-size: 1.5rem;
+  font-weight: 600;
+  margin: 0;
+  color: #000000;
+}
+
+.card-produto-campo {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.card-produto-Descricao {
+  font-size: 1.2rem;
+  font-weight: 600;
+  margin: 0;
+  color: #000000;
+}
+
+.card-produto-campo p {
+  margin: 0;
+  color: #333;
+  font-size: 0.95rem;
+  font-weight: 500;
+  line-height: 1.4;
+}
+
+.card-produto-linha {
+  font-size: 0.95rem;
+  color: #333;
+}
+
+/* Parte de baixo: Disponibilidade à esquerda e Botões à direita */
+.card-produto-rodape {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  margin-top: -2rem;
+  gap: 16px;
+}
+
+.card-produto-disponivel {
+  font-size: 0.9rem;
+  color: #333;
+  max-width: 60%;
+}
+
+/* Estilo dos botões arredondados com borda azul */
+.card-produto-botoes {
+  display: flex;
+  gap: 12px;
+}
+
+.btn-card {
+  background-color: #ffffff;
+  border: 1.5px solid #2f6fed;
+  border-radius: 10px;
+  padding: 8px 24px;
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: #000000;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.btn-card:hover {
+  background-color: #f0f5ff;
+  transform: translateY(-1px);
+}

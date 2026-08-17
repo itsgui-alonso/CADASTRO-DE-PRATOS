@@ -1,5 +1,6 @@
 import { useState } from "react";
 import "./CadastrarProduto.css";
+import ProdutoCard from "../components/Produtos";
 export default function CadastrarProduto() {
   const [nome, setNome] = useState("");
   const [preco, setPreco] = useState("");
@@ -12,27 +13,33 @@ export default function CadastrarProduto() {
     CardapioDigital: true,
     Totem: true,
   });
-  const [produtos, setProdutos] = useState([])
+  const [produtos, setProdutos] = useState([]);
 
   function handleDisponibilidadeChange(campo) {
     setDisponibilidade((prev) => ({
       ...prev,
       [campo]: !prev[campo],
-    }))
+    }));
   }
 
   function handleSubmit(enviar) {
     enviar.preventDefault();
     const newProduto = {
-        nome,
-        preco,
-        descricao,
-        categoria,
-        disponibilidade 
-    }
-    console.log(newProduto)
+      id: Date.now(),  
+      nome,
+      preco,
+      descricao,
+      categoria,
+      disponibilidade,
+    };
+    console.log(newProduto);
 
-    setProdutos([...produtos, newProduto])
+    setProdutos([...produtos, newProduto]);
+
+    setNome("");
+    setPreco("");
+    setDescricao("");
+    setCategoria("");
   }
   return (
     <div className="Cadastrar-Produto">
@@ -43,7 +50,7 @@ export default function CadastrarProduto() {
           <label>
             Nome do Produto
             <input
-            className="nome-produto"
+              className="nome-produto"
               type="text"
               placeholder="Insira um nome deste produto"
               value={nome}
@@ -82,64 +89,71 @@ export default function CadastrarProduto() {
           <label>
             Descrição
             <input
-                type="text"
-                placeholder="Ex: O verdadeiro sabor da Itália na sua casa! Massa no ponto perfeito com um molho ultra cremoso de ovos e queijo, misturado com muito bacon bem crocante e sequinho. Uma explosão de sabor e cremosidade a cada garfada. Perfeito para matar a sua fome!"
-                value={descricao}
-                onChange={(event) => setDescricao(event.target.value)}
+              type="text"
+              placeholder="Ex: O verdadeiro sabor da Itália na sua casa! Massa no ponto perfeito com um molho ultra cremoso de ovos e queijo, misturado com muito bacon bem crocante e sequinho. Uma explosão de sabor e cremosidade a cada garfada. Perfeito para matar a sua fome!"
+              value={descricao}
+              onChange={(event) => setDescricao(event.target.value)}
             ></input>
           </label>
         </div>
 
         <div className="campo-produtoDisponivel">
-            <p>Onde o produdo está diponivel?</p>
-            <label>
-                <input 
-                    type="checkbox"
-                    checked={disponibilidade.Delivery} 
-                    onChange={() => handleDisponibilidadeChange('Delivery')}
-                />
-                Delivery
-            </label>
-            <label>
-                <input 
-                    type="checkbox"
-                    checked={disponibilidade.Salao} 
-                    onChange={() => handleDisponibilidadeChange('Salao')}
-                />
-                Salão
-            </label>
-            <label>
-                <input 
-                    type="checkbox"
-                    checked={disponibilidade.PedidoOnline} 
-                    onChange={() => handleDisponibilidadeChange('PedidoOnline')}
-                />
-                Pedido Online
-            </label>
-            <label>
-                <input 
-                    type="checkbox"
-                    checked={disponibilidade.CardapioDigital} 
-                    onChange={() => handleDisponibilidadeChange('CardapioDigital')}
-                />
-                Cardapio Digital
-            </label>
-            <label>
-                <input 
-                    type="checkbox"
-                    checked={disponibilidade.Totem} 
-                    onChange={() => handleDisponibilidadeChange('Totem')}
-                />
-                Totem
-            </label>
+          <p>Onde o produdo está diponivel?</p>
+          <label>
+            <input
+              type="checkbox"
+              checked={disponibilidade.Delivery}
+              onChange={() => handleDisponibilidadeChange("Delivery")}
+            />
+            Delivery
+          </label>
+          <label>
+            <input
+              type="checkbox"
+              checked={disponibilidade.Salao}
+              onChange={() => handleDisponibilidadeChange("Salao")}
+            />
+            Salão
+          </label>
+          <label>
+            <input
+              type="checkbox"
+              checked={disponibilidade.PedidoOnline}
+              onChange={() => handleDisponibilidadeChange("PedidoOnline")}
+            />
+            Pedido Online
+          </label>
+          <label>
+            <input
+              type="checkbox"
+              checked={disponibilidade.CardapioDigital}
+              onChange={() => handleDisponibilidadeChange("CardapioDigital")}
+            />
+            Cardapio Digital
+          </label>
+          <label>
+            <input
+              type="checkbox"
+              checked={disponibilidade.Totem}
+              onChange={() => handleDisponibilidadeChange("Totem")}
+            />
+            Totem
+          </label>
         </div>
 
         <div className="botao">
-            <button type="submit">Salvar</button>
+          <button type="submit">Salvar</button>
         </div>
       </form>
 
-    
+      <div className="Lista">
+        <h1>Lista de Produtos</h1>
+        <div className="grid-produtos">
+          {produtos.map( (prod) => (
+           <ProdutoCard key={prod.id} prod={prod}></ProdutoCard>
+          ))}
+        </div>
+      </div>
     </div>
   );
 }

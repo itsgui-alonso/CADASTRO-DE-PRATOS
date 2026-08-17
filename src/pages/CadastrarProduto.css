@@ -81,10 +81,9 @@ input[type="text"], input[type="number"], select {
 }
 
 .botao {
-    position: fixed;
-    bottom: 2.4rem;
-    right: 2.4rem;
-    z-index: 1000;
+    display: flex;
+    align-items: center;
+    margin-top: 2.4rem;
 }
 
 .botao button {
@@ -97,6 +96,7 @@ input[type="text"], input[type="number"], select {
   border: none;
   background-color: #2f6fed;
   color: #fff;
+  width: 10%;
 }
 
 .botao button:hover {
