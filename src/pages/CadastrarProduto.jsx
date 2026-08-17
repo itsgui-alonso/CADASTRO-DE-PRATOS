@@ -1,6 +1,5 @@
 import { useState } from "react";
 import "./CadastrarProduto.css";
-import { use } from "react";
 export default function CadastrarProduto() {
   const [nome, setNome] = useState("");
   const [preco, setPreco] = useState("");
@@ -13,6 +12,7 @@ export default function CadastrarProduto() {
     CardapioDigital: true,
     Totem: true,
   });
+  const [produtos, setProdutos] = useState([])
 
   function handleDisponibilidadeChange(campo) {
     setDisponibilidade((prev) => ({
@@ -23,8 +23,16 @@ export default function CadastrarProduto() {
 
   function handleSubmit(enviar) {
     enviar.preventDefault();
-    const novoProduto = {};
-    console.log("Produto Cadastrado: ", novoProduto);
+    const newProduto = {
+        nome,
+        preco,
+        descricao,
+        categoria,
+        disponibilidade 
+    }
+    console.log(newProduto)
+
+    setProdutos([...produtos, newProduto])
   }
   return (
     <div className="Cadastrar-Produto">
@@ -35,6 +43,7 @@ export default function CadastrarProduto() {
           <label>
             Nome do Produto
             <input
+            className="nome-produto"
               type="text"
               placeholder="Insira um nome deste produto"
               value={nome}
@@ -130,7 +139,7 @@ export default function CadastrarProduto() {
         </div>
       </form>
 
-      <button>Ir para Produtos</button>
+    
     </div>
   );
 }
