@@ -84,6 +84,7 @@ input[type="text"], input[type="number"], select {
     display: flex;
     align-items: center;
     margin-top: 2.4rem;
+    gap: 2.0rem;
 }
 
 .botao button {

@@ -2,7 +2,7 @@ import React from "react";
 import "./Produtos.css";
 import imagemDelivery from "../assets/Delivery.jpg";
 
-export default function ProdutoCard({ prod }) {
+export default function ProdutoCard({ prod, onEditar, onExcluir }) {
   return (
     <div className="card-produto">
       
@@ -40,8 +40,20 @@ export default function ProdutoCard({ prod }) {
           </div>
 
           <div className="card-produto-botoes">
-            <button className="btn-card btn-excluir">Excluir</button>
-            <button className="btn-card btn-editar">Editar</button>
+            <button
+              type="button"
+              className="btn-card btn-excluir"
+              onClick={() => onExcluir(prod.id)}
+            >
+              Excluir
+            </button>
+            <button
+              type="button"
+              className="btn-card btn-editar"
+              onClick={() => onEditar(prod)}
+            >
+              Editar
+            </button>
           </div>
         </div>
       </div>

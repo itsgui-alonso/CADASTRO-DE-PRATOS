@@ -1,19 +1,48 @@
-import { useState } from "react";
+import { use, useEffect, useState } from "react";
 import "./CadastrarProduto.css";
 import ProdutoCard from "../components/Produtos";
+import { supabase }  from '../supabaseClient'
+const Disponibilidade_Padrao = {
+  Delivery: true,
+  Salao: true,
+  PedidoOnline: true,
+  CardapioDigital: true,
+  Totem: true,
+};
+
 export default function CadastrarProduto() {
   const [nome, setNome] = useState("");
   const [preco, setPreco] = useState("");
   const [descricao, setDescricao] = useState("");
   const [categoria, setCategoria] = useState("");
-  const [disponibilidade, setDisponibilidade] = useState({
-    Delivery: true,
-    Salao: true,
-    PedidoOnline: true,
-    CardapioDigital: true,
-    Totem: true,
-  });
+  const [disponibilidade, setDisponibilidade] = useState(Disponibilidade_Padrao);
   const [produtos, setProdutos] = useState([]);
+  const [editandoID, setEditandoID] = useState(null)
+  const [carregando, setCarregando] = useState(true)
+  const [salvando, setSalvando] = useState(false)
+  const [erro, setErro] = useState(null)
+
+
+  useEffect(() => { buscarProdutos() }, [])
+
+  async function buscarProdutos() {
+    setCarregando(true)
+    setErro(null)
+
+    const { data, error } = await supabase
+    .from('produtos')
+    .select('*')
+    .order('created_at', { ascending: false})
+    
+
+    if(error) {
+      console.log(error)
+      setErro('Não foi possivel carregar os produtos/pratos...')
+    } else {
+      setProdutos(data)
+    }
+    setCarregando(false)
+  }
 
   function handleDisponibilidadeChange(campo) {
     setDisponibilidade((prev) => ({
@@ -22,28 +51,98 @@ export default function CadastrarProduto() {
     }));
   }
 
-  function handleSubmit(enviar) {
-    enviar.preventDefault();
-    const newProduto = {
-      id: Date.now(),  
-      nome,
-      preco,
+  function limparForms(){
+    setNome('')
+    setPreco('')
+    setDescricao('')
+    setCategoria('')
+    setDisponibilidade(Disponibilidade_Padrao)
+    setEditandoID(null)
+  }
+
+  async function handleSubmit(enviar) {
+    enviar.preventDefault()
+    setSalvando(true)
+    setErro(null)
+
+    const payload = {
+      nome, 
+      preco: Number(preco) || 0,
       descricao,
       categoria,
-      disponibilidade,
-    };
-    console.log(newProduto);
+      disponibilidade
+    }
 
-    setProdutos([...produtos, newProduto]);
+    if(editandoID) {
+      // para editar dados
+      const { error } = await supabase
+      .from('produtos')
+      .update(payload)
+      .eq('id', editandoID)
 
-    setNome("");
-    setPreco("");
-    setDescricao("");
-    setCategoria("");
+      if(error){
+        console.error(error)
+        setErro('Não foi possivel salvar essa edição de dados')
+        setSalvando(false)
+        return
+      }
+    } else {
+      // caso nao editar ele  vai inserir no banco
+
+      const { error } = await supabase.from('produtos').insert([payload])
+
+      if(error) {
+        console.error(error)
+        setErro('Não foi possivel cadastrar o produto/prato...')
+        setSalvando(false)
+        return
+      }
+    }
+
+    await buscarProdutos()
+    limparForms()
+    setSalvando(false)
+  }
+
+  function handleEditar(prod) {
+    setNome(prod.nome)
+    setPreco(prod.preco)
+    setDescricao(prod.descricao)
+    setCategoria(prod.categoria)
+    setDisponibilidade(prod.disponibilidade || Disponibilidade_Padrao)
+    setEditandoID(prod.id)
+
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }
+
+  async function handleExcluir(id) {
+    const confirmar = window.confirm('Você tem certeza que vai excluir esse prato? Lembrando, não tem como voltar')
+    if(!confirmar) return
+
+    setErro(null)
+    const { error } = await supabase.from('produtos').delete().eq('id', id)
+
+    if(error){
+      console.error(error)
+      setErro('Não foi possivel excluir o produto/prato')
+      return
+    }
+
+    setProdutos((i) => i.filter((prod) => prod.id !== id))
+
+    if(editandoID === id){
+      limparForms()
+    }
   }
   return (
     <div className="Cadastrar-Produto">
       <h1>Cadastrar Produto</h1>
+
+      {erro && (
+        <div className="mensagem-erro" role="alert">
+          {erro}
+        </div>
+      )}
 
       <form onSubmit={handleSubmit}>
         <div className="campo-inicial">
@@ -141,18 +240,46 @@ export default function CadastrarProduto() {
           </label>
         </div>
 
-        <div className="botao">
-          <button type="submit">Salvar</button>
+       <div className="botao">
+          <button type="submit" disabled={salvando}>
+            {salvando
+              ? "Salvando..."
+              : editandoID
+              ? "Salvar edição"
+              : "Salvar"}
+          </button>
+          {editandoID && (
+            <button
+              type="button"
+              className="btn-cancelar-edicao"
+              onClick={limparForms}
+              disabled={salvando}
+            >
+              Cancelar edição
+            </button>
+          )}
         </div>
       </form>
 
       <div className="Lista">
         <h1>Lista de Produtos</h1>
-        <div className="grid-produtos">
-          {produtos.map( (prod) => (
-           <ProdutoCard key={prod.id} prod={prod}></ProdutoCard>
-          ))}
-        </div>
+
+        {carregando ? (
+          <p>Carregando produtos...</p>
+        ) : produtos.length === 0 ? (
+          <p>Nenhum produto cadastrado ainda.</p>
+        ) : (
+          <div className="grid-produtos">
+            {produtos.map((prod) => (
+              <ProdutoCard
+                key={prod.id}
+                prod={prod}
+                onEditar={handleEditar}
+                onExcluir={handleExcluir}
+              ></ProdutoCard>
+            ))}
+          </div>
+        )}
       </div>
     </div>
   );
